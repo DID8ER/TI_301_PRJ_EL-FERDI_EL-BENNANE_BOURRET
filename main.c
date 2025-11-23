@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h> // Nécessaire pour malloc, exit, etc.
-#include "graph.h"  // Tes fonctions graph (Partie 1)
-#include "tarjan.h" // Tes fonctions tarjan (Partie 2)
-#include "hasse.h"  // Tes fonctions hasse (Partie 2)
+#include "graph.h"  // Partie 1
+#include "tarjan.h" // Partie 2
+#include "hasse.h"  // Partie 2
+#include "calculs.h" // AJOUT PARTIE 3 (Matrices et Périodes)
+#include "matrix.h" // AJOUT PARTIE 3 (Matrices et Périodes)
 
 int main(void)
 {
@@ -11,7 +13,7 @@ int main(void)
     char inFile[256];
     char outFile[256];
 
-    /* Déclarations pour la Partie 2 */
+    /* Déclarations pour la Partie 2 et 3 */
     t_partition *partition = NULL;
     t_link_array liens;
 
@@ -20,6 +22,7 @@ int main(void)
     printf("2) Verification Markov\n");
     printf("3) Creer fichier Mermaid\n");
     printf("4) Analyse complete (Partie 2 : Tarjan + Hasse + Proprietes)\n");
+    printf("5) Probabilites et Periode (Partie 3 : Matrices)\n"); // NOUVEAU
     printf("Votre choix : ");
     scanf("%d", &choix);
 
@@ -30,7 +33,6 @@ int main(void)
         ListeAdjacence G = readGraph(inFile);
         afficherListeAdjacence(&G);
 
-        // Libération basique du tableau (idéalement faire une fonction de libération complète)
         free(G.tableau);
     }
 
@@ -97,7 +99,6 @@ int main(void)
 
         /* 3. Construction des liens (Hasse) */
         printf("\n--- [2] Construction du Diagramme de Hasse ---\n");
-        // Note : on cast &G en (t_adjlist*) si ton compilateur est strict, mais c'est la même structure
         liens = construire_liens_classes(&G, partition);
 
         /* 4. Suppression des liens transitifs (Optionnel mais propre) */
@@ -114,6 +115,61 @@ int main(void)
         /* 7. Nettoyage Mémoire */
         liberer_link_array(&liens);
         liberer_partition(partition);
+        free(G.tableau);
+    }
+
+        /* --- CHOIX 5 : Matrices et Périodes (Partie 3 - AJOUTÉ) --- */
+    else if (choix == 5) {
+        printf("Fichier a charger pour probabilites (ex: ../data/exemple_meteo.txt) : ");
+        scanf("%255s", inFile);
+
+        ListeAdjacence G = readGraph(inFile);
+
+        // 1. Matrice de Transition
+        printf("\n--- 1. Matrice de Transition ---\n");
+        t_matrix M = grapheToMatrix(&G);
+        displayMatrix(M);
+
+        // 2. Simulation d'évolution
+        printf("\n--- 2. Simulation d'evolution (10 etapes) ---\n");
+        /* Vecteur initial : on part du sommet 1 (100% de chance) */
+        float *distrib = (float*)calloc(G.nbSommets, sizeof(float));
+        if(G.nbSommets > 0) distrib[0] = 1.0f; // Sommet 1 = index 0
+
+        printf("Etat initial (Sommet 1) : [ ");
+        for(int i=0; i<G.nbSommets; i++) printf("%.2f ", distrib[i]);
+        printf("]\n");
+
+        for(int t=1; t<=10; t++) {
+            float *new_dist = multiplication_vecteur_matrice(distrib, M);
+            free(distrib);
+            distrib = new_dist;
+
+            printf("Etape %d : [ ", t);
+            for(int i=0; i<G.nbSommets; i++) printf("%.2f ", distrib[i]);
+            printf("]\n");
+        }
+        free(distrib);
+
+        // 3. Calcul des Périodes
+        printf("\n--- 3. Calcul des Periodes ---\n");
+        /* On réutilise Tarjan pour avoir les classes */
+        partition = tarjan(&G);
+
+        if (partition != NULL) {
+            for(int i=0; i<partition->taille_logique; i++) {
+                t_classe *c = &partition->classes[i];
+                int periode = calculer_periode_classe(&G, c);
+
+                printf("Classe C%d : { ", c->id_classe + 1);
+                for(int k=0; k<c->taille_logique; k++) printf("%d ", c->identifiants_sommets[k]);
+                printf("} -> Periode = %d\n", periode);
+            }
+            liberer_partition(partition);
+        }
+
+        // Nettoyage
+        freeMatrix(&M);
         free(G.tableau);
     }
     else {
