@@ -28,7 +28,7 @@ int main(void)
 
     /* --- CHOIX 1 : Affichage (Partie 1) --- */
     if (choix == 1) {
-        printf("Fichier a charger (ex: ../data/exemple1.txt) : ");
+        printf("Fichier a charger (ex: ../data/exemple1_part1.txt) : ");
         scanf("%255s", inFile);
         ListeAdjacence G = readGraph(inFile);
         afficherListeAdjacence(&G);
@@ -38,7 +38,7 @@ int main(void)
 
         /* --- CHOIX 2 : Markov (Partie 1) --- */
     else if (choix == 2) {
-        printf("Fichier a charger (ex: data/exemple1.txt) : ");
+        printf("Fichier a charger (ex: data/exemple1_part1.txt) : ");
         scanf("%255s", inFile);
         ListeAdjacence G = readGraph(inFile);
 
@@ -67,7 +67,7 @@ int main(void)
 
         /* --- CHOIX 3 : Mermaid Graphe (Partie 1) --- */
     else if (choix == 3) {
-        printf("Fichier a charger (ex: data/exemple1.txt) : ");
+        printf("Fichier a charger (ex: data/exemple1_part1.txt) : ");
         scanf("%255s", inFile);
         ListeAdjacence G = readGraph(inFile);
 
@@ -81,7 +81,7 @@ int main(void)
 
         /* --- CHOIX 4 : Analyse Complète (Partie 2) --- */
     else if (choix == 4) {
-        printf("Fichier a charger pour analyse (ex: ../data/exemple_hasse1.txt) : ");
+        printf("Fichier a charger pour analyse (ex: ../data/exemple_hasse1_part2.txt) : ");
         scanf("%255s", inFile);
 
         /* 1. Chargement du graphe */
@@ -120,7 +120,7 @@ int main(void)
 
         /* --- CHOIX 5 : Matrices et Périodes (Partie 3 - AJOUTÉ) --- */
     else if (choix == 5) {
-        printf("Fichier a charger pour probabilites (ex: ../data/exemple_meteo.txt) : ");
+        printf("Fichier a charger pour probabilites (ex: ../data/exemple_meteo_part3.txt) : ");
         scanf("%255s", inFile);
 
         ListeAdjacence G = readGraph(inFile);
