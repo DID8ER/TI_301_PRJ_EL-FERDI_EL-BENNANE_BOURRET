@@ -8,6 +8,7 @@ add_executable(TI_301_PJT
         cellule.c
         graph.c
         utils.c
-        # hasse.c
+        hasse.c
+        tarjan.c
 )
 
