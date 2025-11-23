@@ -28,7 +28,7 @@ int main(void)
 
     /* --- CHOIX 1 : Affichage (Partie 1) --- */
     if (choix == 1) {
-        printf("Fichier a charger (ex: data/exemple1.txt) : ");
+        printf("Fichier a charger (ex: ../data/exemple1.txt) : ");
         scanf("%255s", inFile);
         ListeAdjacence G = readGraph(inFile);
         afficherListeAdjacence(&G);
